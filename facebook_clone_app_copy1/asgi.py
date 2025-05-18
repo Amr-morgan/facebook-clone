@@ -8,10 +8,6 @@ import core.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'facebook_clone_app_copy1.settings')
 
-# application = ProtocolTypeRouter({
-#     "http": get_asgi_application(),
-# })
-
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
     "websocket": AuthMiddlewareStack(
