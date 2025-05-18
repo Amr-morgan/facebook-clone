@@ -10,7 +10,7 @@
 ------------------
 ## 1. USER AUTHENTICATION
 ------------------
-
+```
 FUNCTION register_user():
     GET registration form
     IF form is valid:
@@ -33,11 +33,11 @@ FUNCTION login_user():
 FUNCTION logout_user():
     DESTROY session
     REDIRECT to login
-
+```
 ------------------
 ## 2. FRIENDS SYSTEM
 ------------------
-
+```
 CLASS FriendRequest:
     ATTRIBUTES:
         sender (User)
@@ -59,11 +59,11 @@ FUNCTION accept_request(request_id):
 FUNCTION reject_request(request_id):
     UPDATE status to rejected
     SEND notification to sender
-
+```
 ------------------
 ## 3. NEWS FEED
 ------------------
-
+```
 FUNCTION get_news_feed(user):
     GET user's friends
     GET posts from user and friends
@@ -75,11 +75,11 @@ FUNCTION create_post(user, content):
     CREATE new Post object
     ADD to news feed
     RETURN success status
-
+```
 ------------------
 ## 4. REAL-TIME CHAT
 ------------------
-
+```
 WEBSOCKET HANDLER:
     ON connect:
         AUTHENTICATE user
@@ -100,11 +100,11 @@ FUNCTION get_chat_history(user1, user2):
     GET last 100 messages
     ORDER BY timestamp ASC
     RETURN messages
-
+```
 ------------------
 ## 5. PROFILE MANAGEMENT
 ------------------
-
+```
 FUNCTION view_profile(user_id):
     GET user object
     GET profile info:
@@ -119,11 +119,11 @@ FUNCTION edit_profile(user, new_data):
     UPDATE profile fields
     SAVE changes
     RETURN updated profile
-
+```
 ------------------
 ## MAIN FLOW
 ------------------
-
+```
 WHILE application running:
     HANDLE routes:
         '/' => News Feed
@@ -140,3 +140,4 @@ WHILE application running:
         - Cleanup expired sessions
         - Send notifications
         - Update online status
+```
