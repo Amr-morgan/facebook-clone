@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/profile_edit.css' %}">
+{% endblock %}
+
+{% block main_content %}
+<main class="content">
+    <div class="edit-profile-container">
+        <div class="card">
+            <div class="card-header" style="justify-content: space-between;">
+                <h2>Edit Profile</h2>
+            </div>
+
+            <form method="post" action="{% url 'core:profile_edit' %}" enctype="multipart/form-data" style="padding: 16px;">
+                {% csrf_token %}
+                <div class="edit-section">
+                    <div class="edit-header">Profile Picture</div>
+                    <div class="profile-picture-edit">
+                        <div class="profile-picture-container">
+                            <img src="{{ user.profile_picture.url }}" alt="Profile" class="profile-picture">
+                            <label class="photo-edit-overlay">
+                                <input type="file" name="profile_picture" accept="image/*" style="display: none;">
+                                <i class="fas fa-camera"></i>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="edit-section">
+                        <div class="edit-header">Basic Information</div>
+
+                        <div class="edit-field">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" value="@{{ user.username }}" readonly>
+                        </div>
+
+                        <div class="edit-field">
+                            <label for="first_name">First Name</label>
+                            <input type="text" name="first_name" id="first_name" value="{{ user.first_name }}">
+                        </div>
+
+                        <div class="edit-field">
+                            <label for="last_name">Last Name</label>
+                            <input type="text" name="last_name" id="last_name" value="{{ user.last_name }}">
+                        </div>
+
+                        <div class="edit-field">
+                            <label for="bio">Bio</label>
+                            <textarea name="bio" id="bio">{{ user.bio }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="edit-section">
+                        <div class="edit-header">Contact Information</div>
+
+                        <div class="edit-field">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" value="{{ user.email }}" readonly>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <a href="{% url 'core:profile' %}" class="cancel-btn">Cancel</a>
+                        <button type="submit" class="save-btn">Save Changes</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+{% endblock %}

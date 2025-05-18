@@ -1,0 +1,62 @@
+.friends-list {
+    padding: 10px;
+}
+
+.friend-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.profile-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-link {
+    margin-right: 15px;
+    text-decoration: none;
+}
+
+.friend-content {
+    flex-grow: 1;
+}
+
+.friend-name {
+    font-weight: bold;
+    color: #385898;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 3px;
+    text-decoration: none;
+}
+
+.friend-name:hover {
+    cursor: pointer;
+}
+
+.friend-mutual {
+    color: #777;
+    font-size: 0.9em;
+    margin: 0;
+}
+
+.remove-friend-btn {
+    background-color: #f5f6f7;
+    border: 1px solid #ccd0d5;
+    border-radius: 4px;
+    padding: 5px 10px;
+    color: #4b4f56;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+}
+
+.remove-friend-btn:hover {
+    background-color: #ebedf0;
+}

@@ -1,0 +1,166 @@
+/* Main CSS for Facebook Clone */
+:root {
+    --facebook-blue: #1877f2;
+    --facebook-dark-blue: #166fe5;
+    --facebook-gray: #f0f2f5;
+    --text-dark: #1c1e21;
+    --text-light: #606770;
+    --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --gradient-bg: linear-gradient(90deg, #4e54c8, #8f94fb);
+    --sidebar-gradient: linear-gradient(180deg, #3a3ad7, #5454f3);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: var(--facebook-gray);
+    color: var(--text-dark);
+}
+
+/* Navbar */
+.navbar {
+    background: var(--gradient-bg);
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    justify-content: space-between;
+    color: white;
+}
+
+.logo {
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+}
+
+.nav-icons {
+    display: flex;
+    gap: 12px;
+    text-decoration: none;
+}
+
+.nav-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    color: white;
+}
+
+.nav-icon:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.search-container {
+    position: relative;
+    margin-left: 10px;
+}
+
+.search-input {
+    padding: 8px 8px 8px 36px;
+    border-radius: 20px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.2);
+    width: 240px;
+    font-size: 15px;
+    color: white;
+}
+
+.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+}
+
+/* Layout */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    min-height: calc(100vh - 56px);
+}
+
+.sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 56px;
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+    background: var(--sidebar-gradient);
+    color: white;
+    padding-top: 20px;
+}
+
+.content {
+    flex-grow: 1;
+    max-width: 680px;
+    padding: 20px;
+    background-color: #868686;
+    min-height: calc(100vh - 56px);
+}
+
+/* Sidebar Links */
+.sidebar-links {
+    display: flex;
+    flex-direction: column;
+    padding: 0 8px;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 8px;
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+    margin-bottom: 4px;
+    transition: background-color 0.2s;
+}
+
+.sidebar-link i {
+    margin-right: 10px;
+    width: 24px;
+    text-align: center;
+}
+
+.sidebar-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Footer */
+.footer {
+    padding: 15px;
+    text-align: center;
+    background: var(--gradient-bg);
+    color: white;
+    font-size: 14px;
+}

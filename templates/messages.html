@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if other_user %}
+        Chat with {{ other_user.username }}
+    {% else %}
+        Messages
+    {% endif %}
+{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/messages.css' %}">
+{% endblock %}
+
+{% block main_content %}
+<div class="messages-container">
+    <div class="messages-sidebar">
+        <div class="messages-header">
+            <h2>Chats</h2>
+        </div>
+        <div class="message-list">
+            {% for chat in formatted_chats %}
+                <a href="{% url 'core:chat_room' username=chat.other_user.username %}" class="room-link">
+                    <div class="message-item {% if chat.other_user.username == other_user.username %}active{% endif %}" 
+                        data-username="{{ chat.other_user.username }}">
+                        {% if chat.other_user.profile_picture_url %}
+                            <img src="{{ chat.other_user.profile_picture_url }}" alt="Profile" class="profile-img">
+                        {% endif %}
+                        {% if chat.profile_picture_url %}
+                            <img src="{{ chat.profile_picture_url }}" alt="Profile" class="profile-img">
+                        {% else %}
+                            <div class="profile-img default-avatar">{{ chat.other_user.username|first|upper }}</div>
+                        {% endif %}
+                        
+                        <div class="message-details">
+                            <div class="message-name">{{ chat.other_user.username }}</div>
+                            <div class="message-preview">
+                                {{ chat.last_message|truncatechars:30 }}
+                            </div>
+                        </div>
+                        
+                        <div class="message-time">
+                            {% if chat.last_message_time %}
+                                {{ chat.last_message_time|timesince }} ago
+                            {% else %}
+                                No messages
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="chat-container">
+        {% if other_user %}
+            <div class="chat-header">
+                {% if other_user.profile_picture_url %}
+                    <img src="{{ other_user.profile_picture_url }}" 
+                         alt="{{ other_user.username }}" 
+                         class="profile-img"
+                         onerror="this.src='{% static 'images/default_profile.png' %}'">
+                {% else %}
+                    <div class="profile-img default-avatar">
+                        {{ other_user.username|first|upper }}
+                    </div>
+                {% endif %}
+                
+                <div class="user-info">
+                    <h4>{{ other_user.username }}</h4>
+                    <span class="timestamp">
+                        {% if other_user.is_online %}
+                            Online
+                        {% else %}
+                            Offline
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="chat-actions">
+                    <a href="{% url 'core:profile' other_user.username %}" class="profile-link">
+                    <i class="fas fa-info-circle"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="chat-body" id="chat-messages" style="display: flex; flex-direction: column;">
+                {% if has_messages %}
+                    <div class="date-separator">Today</div>
+                    {% for message in messages %}
+                        <div class="message-bubble {% if message.sender == request.user %}message-sent{% else %}message-received{% endif %}">
+                            {{ message.content|linebreaksbr }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <form class="chat-footer" id="chat-form" data-room-id="{{ room_id }}"
+                  method="POST">
+                {% csrf_token %}
+                <input type="text" 
+                       id="chat-message-input" 
+                       placeholder="Type a message..." 
+                       class="chat-input"
+                       aria-label="Type your message"
+                       required>
+                <button type="submit" class="send-button" aria-label="Send message">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    {% if room_id %}
+    document.addEventListener('DOMContentLoaded', function() {
+        const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+        const socketUrl = `${protocol}${window.location.host}/ws/chat/${ {{ room_id }} }/`;
+        const chatSocket = new WebSocket(socketUrl);
+        
+        // DOM elements
+        const messagesList = document.getElementById('chat-messages');
+        const messageInput = document.getElementById('chat-message-input');
+        const chatForm = document.getElementById('chat-form');
+        
+        // Reconnection logic
+        let reconnectAttempts = 0;
+        const maxReconnectAttempts = 5;
+        const reconnectDelay = 3000;
+        
+        // Connection handlers
+        chatSocket.onopen = function(e) {
+            console.log('WebSocket connection established');
+            reconnectAttempts = 0;
+        };
+        
+        chatSocket.onerror = function(e) {
+            console.error('WebSocket error:', e);
+        };
+        
+        chatSocket.onclose = function(e) {
+            console.log('WebSocket closed:', e);
+            if (!e.wasClean && reconnectAttempts < maxReconnectAttempts) {
+                console.log(`Reconnecting... (${reconnectAttempts + 1}/${maxReconnectAttempts})`);
+                setTimeout(() => {
+                    reconnectAttempts++;
+                    const newSocket = new WebSocket(socketUrl);
+                    Object.assign(newSocket, {
+                        onopen: chatSocket.onopen,
+                        onmessage: chatSocket.onmessage,
+                        onerror: chatSocket.onerror,
+                        onclose: chatSocket.onclose
+                    });
+                    chatSocket = newSocket;
+                }, reconnectDelay);
+            }
+        };
+        
+        // Message handling
+        chatSocket.onmessage = function(e) {
+            try {
+                const data = JSON.parse(e.data);
+                console.log('Received:', data);
+                
+                if (data.type === 'chat_message') {
+                    appendMessage(data);
+                }
+                
+                scrollToBottom();
+            } catch (error) {
+                console.error('Error processing message:', error);
+            }
+        };
+        
+        // Helper functions
+        function appendMessage(data) {
+            const isSentMessage = data.user_username === '{{ request.user.username }}';
+            const messageClass = isSentMessage ? 'message-sent' : 'message-received';
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message-bubble ${messageClass}`;
+            messageDiv.textContent = data.message;
+            
+            messagesList.appendChild(messageDiv);
+        }
+        
+        function scrollToBottom() {
+            messagesList.scrollTop = messagesList.scrollHeight;
+        }
+        
+        // Event listeners
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const message = messageInput.value.trim();
+            if (message && chatSocket.readyState === WebSocket.OPEN) {
+                chatSocket.send(JSON.stringify({
+                    'type': 'chat_message',
+                    'message': message
+                }));
+                messageInput.value = '';
+            }
+        });
+        
+        // Initial scroll to bottom
+        scrollToBottom();
+        
+        // Search functionality
+        const searchInput = document.querySelector('.search-messages input');
+        const messageItems = document.querySelectorAll('.message-item');
+        
+        if (searchInput && messageItems) {
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                messageItems.forEach(item => {
+                    const nameElement = item.querySelector('.message-name');
+                    if (nameElement) {
+                        const name = nameElement.textContent.toLowerCase();
+                        item.style.display = name.includes(searchTerm) ? 'flex' : 'none';
+                    }
+                });
+            });
+        }
+        
+        // Click handlers for message items
+        document.querySelectorAll('.message-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const username = this.getAttribute('data-username');
+                window.location.href = `/messages/${username}/`;
+            });
+        });
+    });
+    {% endif %}
+</script>
+{% endblock %}

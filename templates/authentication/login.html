@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <!-- Link to the CSS file -->
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h2>Login Form</h2>
+            <div class="button-group">
+                <button class="active">Login</button>
+                <a href="{% url 'core:signup' %}" class="inactive">Signup</a>
+            </div>
+            <div>
+                <style>
+                    h5{
+                        color: red;
+                    }
+                </style>
+                {% for message in messages %}
+                <h5>{{message}}</h5>
+                {% endfor %}
+            </div>
+            <form method="POST" action="{% url 'core:login' %}">
+                {% csrf_token %}
+                <input type="text" name="user_name" placeholder="Username" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <a href="#" class="forgot-password">Forgot password?</a>
+                <button type="submit" class="login-btn">Login</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

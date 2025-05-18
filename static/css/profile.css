@@ -1,0 +1,143 @@
+/* Additional styles for profile page */
+.profile-header {
+    position: relative;
+    margin-bottom: 60px;
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+}
+
+.profile-pic-large {
+    width: 168px;
+    height: 168px;
+    border-radius: 50%;
+    border: 4px solid white;
+    position: static;
+    bottom: -40px;
+    left: 20px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+}
+
+.profile-name {
+    margin-left: 40px;
+    font-size: 28px;
+    color: #ffffff;
+}
+
+.profile-tabs {
+    display: flex;
+    border-top: 1px solid #e4e6e9;
+    margin-top: 20px;
+    background-color: white;
+    justify-content: space-around;
+}
+
+.profile-tab {
+    padding: 16px 32px;
+    font-weight: bold;
+    color: var(--text-light);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+}
+
+.profile-tab.active {
+    color: var(--facebook-blue);
+    border-bottom: 3px solid var(--facebook-blue);
+}
+
+.profile-meta {
+    display: flex;
+    margin-left: 40px;
+    color: whitesmoke;
+}
+
+.profile-meta-item {
+    margin-right: 12px;
+    color: #e3e6eb;
+    font-size: 15px;
+}
+
+.profile-meta-item i {
+    margin-right: 4px;
+    font-size: 14px;
+}
+
+.profile-actions {
+    position: absolute;
+    right: 20px;
+    bottom: 75px;
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.action-btn i {
+    margin-right: 6px;
+}
+
+.btn-edit {
+    background-color: var(--facebook-blue);
+    color: white;
+    text-decoration: none;
+}
+
+.btn-primary-outline {
+    background-color: rgba(24, 119, 242, 0.1);
+    color: var(--facebook-blue);
+}
+
+.photos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+}
+
+.photo-item {
+    aspect-ratio: 1;
+    overflow: hidden;
+}
+
+.photo-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.about-section {
+    padding: 16px;
+}
+
+.about-item {
+    display: flex;
+    margin-bottom: 16px;
+    align-items: center;
+}
+
+.about-icon {
+    width: 36px;
+    height: 36px;
+    background-color: #e4e6eb;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    color: #65676b;
+}
+
+.about-text h4 {
+    font-size: 15px;
+    margin-bottom: 2px;
+}
+
+.about-text p {
+    color: #65676b;
+    font-size: 13px;
+}

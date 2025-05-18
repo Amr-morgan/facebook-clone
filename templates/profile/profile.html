@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Profile{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+    <link rel="stylesheet" href="{% static 'css/posts.css' %}">
+{% endblock %}
+
+{% block main_content %}
+<main class="content">
+    <div class="profile-header">
+        <img src="{{ profile_user.profile_picture.url }}" alt="Profile" class="profile-pic-large">
+        <h1 class="profile-name">{{ profile_user.username }}</h1>
+        <div class="profile-meta">
+            {{ profile_user.bio|default:"No bio available." }}
+        </div>
+
+        {% if request.user == profile_user %}
+            <div class="profile-actions">
+                <a href="{% url 'core:profile_edit' %}" class="action-btn btn-edit">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </a>
+            </div>
+        {% else %}
+            {% if is_friend %}
+                <div class="profile-actions">
+                    <a href="{% url 'core:remove_friend' profile_user.username %}" class="action-btn btn-edit" style="background-color: #F44336;">
+                        <i class="fas fa-user-minus"></i> Remove Friend
+                    </a>
+                </div>
+            {% elif pending_request %}
+                <div class="profile-actions">
+                    <a href="{% url 'core:cancel_friend_request' profile_user.username %}" class="action-btn btn-edit" style="background-color: #F44336;">
+                        <i class="fas fa-user-times"></i> Cancel Friend Request
+                    </a>
+                </div>
+            {% elif received_request %}
+                <div class="profile-actions">
+                    <a href="{% url 'core:accept_friend_request' profile_user.username %}" class="action-btn btn-edit" style="background-color: #4CAF50;">
+                        <i class="fas fa-user-check"></i> Accept Friend Request
+                    </a>
+                    <a href="{% url 'core:decline_friend_request' profile_user.username %}" class="action-btn btn-edit" style="background-color: #F44336;">
+                        <i class="fas fa-user-times"></i> Decline Friend Request
+                    </a>
+                </div>
+            {% else %}
+                <div class="profile-actions">
+                    <a href="{% url 'core:send_friend_request' profile_user.username %}" class="action-btn btn-edit" style="background-color: #4CAF50;">
+                        <i class="fas fa-user-plus"></i> Add Friend
+                    </a>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <div class="card" style="margin-bottom: 16px;">
+        <div class="profile-tabs">
+            <div class="profile-tab active">Posts</div>
+            <div class="profile-tab">Friends</div>
+        </div>
+    </div>
+
+    <div>
+        <!-- Posts -->
+        {% for post in posts %}
+            <div class="card">
+
+                <!-- Post Header -->
+                <div class="card-header">
+                    <img src="{{ post.user.profile_picture.url }}" alt="Profile" class="profile-img">
+                    <div class="user-info">
+                        <h4>{{ post.user.username }}</h4>
+                        <span class="timestamp">{{ post.timestamp|timesince }} ago</span>
+                    </div>
+                </div>
+
+                <!-- Post Content -->
+                <div class="card-content">
+                    <p>{{ post.content }}</p>
+                </div>
+
+                <!-- Post Image -->
+                {% if post.post_picture %}
+                <img src="{{ post.post_picture.url }}" alt="Post image"
+                    class="card-image"
+                >
+                {% endif %}
+
+                <!-- Post Actions -->
+                <div class="card-actions">
+                    <form class="action-button" method="post" action="{% url 'core:like_post' post.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="action-button">
+                            <i class="fas fa-thumbs-up"></i>
+                            <span>Like</span> ({{ post.like_count }})
+                        </button>
+                    </form>
+                    {% comment %} <button class="action-button">
+                        <i class="fas fa-comment"></i>
+                        <span>Comment</span>
+                    </button> {% endcomment %}
+                    <!-- Delete Post -->
+                    {% if post.user == request.user %}
+                        <form class="action-button" method="post" action="{% url 'core:delete_post' post.id %}">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    class="action-button"
+                                    onclick="return confirm('Are you sure you want to delete this post?')">
+                                <i class="fas fa-trash"></i>
+                                <span>Delete</span>
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <div class="card">
+                <div class="card-content">
+                    <p>No posts available.</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</main>
+{% endblock %}

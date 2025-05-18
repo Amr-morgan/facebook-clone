@@ -1,0 +1,117 @@
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f5f7;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Create Post Section */
+.create-post {
+  background-color: #ffffff;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.create-post textarea {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  resize: none;
+  font-size: 16px;
+  background-color: #f0f2f5;
+  margin-bottom: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.create-post textarea:focus {
+  outline: none;
+  background-color: #e4e6e9;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px solid #e4e6eb;
+}
+
+.post-actions button,
+.post-actions .upload-image-button button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.post-actions button:first-child {
+  background-color: #1b74e4;
+  color: #fff;
+}
+
+.post-actions button:first-child:hover {
+  background-color: #166fe5;
+}
+
+.post-actions button:last-child {
+  background-color: #42b72a;
+  color: #fff;
+}
+
+.post-actions button:last-child:hover {
+  background-color: #36a420;
+}
+
+.upload-image-button button {
+  background-color: #f0f2f5;
+  color: #6c757d;
+  border: 1px solid #ced4da;
+}
+
+.upload-image-button button:hover {
+  background-color: #e9ecef;
+}
+
+/* Posts Container */
+.posts-container {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.post-item {
+  padding: 16px;
+  border-bottom: 1px solid #e4e6eb;
+}
+
+.post-item:last-child {
+  border-bottom: none;
+}
+
+.post-item p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.post-item img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-top: 12px;
+}

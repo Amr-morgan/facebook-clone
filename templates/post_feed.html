@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Post Feed
+{% endblock %}
+
+{% block styles %}
+<link rel='stylesheet' href="{% static 'css/posts.css' %}">
+{% endblock %}
+
+{% block main_content %}
+<main class="content">
+    <!-- Create Post -->
+    <div class="card post-form">
+        <div class="create-post">
+            {% if user.is_authenticated %}
+                <img src="{{ user.profile_picture.url }}" alt="Profile" class="profile-img">
+            {% else %}
+                <img src="{% static 'media/default_profile_pic.png' %}" alt="Profile" class="profile-img">
+            {% endif %}
+        </div>
+
+        <!-- Create Post form -->
+        <form style="padding: 0 16px 16px;" method="post" action="{% url 'core:post' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <textarea name="content" id="post-textarea" class="post-textarea" placeholder="What's on your mind?"></textarea>
+            <div class="post-actions">
+                <div class="file-input-container">
+                    <label class="file-input-label">
+                        <i class="fas fa-image"></i>
+                        <span>Add Photo</span>
+                        <input name="post_image" type="file" style="display: none;">
+                    </label>
+                </div>
+                <button type="submit" class="post-button">Post</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Posts Feed -->
+    {% for post in posts %}
+    <div class="post-item">
+        <div class="post-header"> <!-- user info -->
+            <img src="{{ post.user.profile_picture.url }}" 
+                            class="profile-img" 
+                            alt="{{ post.user.username }}'s profile picture">
+            <div class="post-user-info">
+                <div class="post-username">
+                    <a href="{% url 'core:profile' post.user.username %}">{{ post.user.username }}</a>
+                </div>
+                <div class="post-time">{{ post.timestamp|timesince }} ago</div>
+            </div>
+        </div>
+        <div class="post-content">
+            <!-- Post Content -->
+            {% if post.content %}
+                <div class="post-text">{{ post.content }}</div>
+            {% endif %}
+
+            <!-- Post Image -->
+            {% if post.post_picture %}
+                <img src="{{ post.post_picture.url }}" alt="Post image" class="post-image">
+            {% endif %}
+
+            <!-- Post Actions -->
+            <div class="card-actions">
+
+                <!-- Like Post -->
+                <form class="action-button" method="post" action="{% url 'core:like_post' post.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="action-button">
+                        <i class="fas fa-thumbs-up"></i>
+                        <span>
+                            {% if post.is_liked %}
+                                Unlike
+                            {% else %}
+                                Like
+                            {% endif %}
+                        </span> ({{ post.like_count }})
+                    </button>
+                </form>
+
+                {% comment %} <!-- Comment Post -->
+                <form class="action-button" method="post" action="{% url 'core:add_comment' post.id %}">
+                    {% csrf_token %}
+                    <button class="action-button">
+                        <i class="fas fa-comment"></i>
+                        <span>Comment</span>
+                    </button>
+                </form> {% endcomment %}
+
+                <!-- Delete Post -->
+                {% if post.user == request.user %}
+                    <form class="action-button" method="post" action="{% url 'core:delete_post' post.id %}">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="action-button"
+                                onclick="return confirm('Are you sure you want to delete this post?')">
+                            <i class="fas fa-trash"></i>
+                            <span>Delete</span>
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+        <!-- No posts available -->
+        <div class="alert alert-info">No posts yet. Be the first to post!</div>
+    {% endfor %}
+</main>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Friends List
+{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/friends.css' %}">
+{% endblock %}
+
+{% block main_content %}
+<main class="content">
+    <div class="card">
+        <div class="card-header">
+            <h2>Friends</h2>
+        </div>
+
+        <div class="friends-list">
+            {% for friend in friends %}
+                <div class="friend-item">
+                    <a href="{% url 'core:profile' friend.username %}" class="profile-link">
+                        <img src="{{ friend.profile_picture.url }}" alt="Profile" class="profile-img">
+                    </a>
+                    <div class="friend-content">
+                        <a href="{% url 'core:profile' friend.username %}" class="friend-name">{{ friend.username }}</a>
+                    </div>
+                    <a href="{% url 'core:remove_friend' friend.username %}" class="remove-friend-btn">
+                        <i class="fas fa-user-minus"></i> Remove
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+{% endblock %}
