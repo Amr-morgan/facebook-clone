@@ -82,8 +82,12 @@ WSGI_APPLICATION = 'facebook_clone_app_copy1.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'fb_clone',
+        'USER': 'postgres',
+        'PASSWORD': '2020',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -141,5 +145,3 @@ CHANNEL_LAYERS = {
     },
 }
 
-# CORS_ALLOW_ALL_ORIGINS = True
-# CORS_ALLOW_CREDENTIALS = True

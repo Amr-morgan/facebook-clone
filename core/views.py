@@ -1,11 +1,10 @@
 from django.shortcuts import render, redirect
-from django.contrib import messages, auth
+from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
 from django.db.models import Count, Q
 from django.db.models.expressions import OuterRef, Subquery
 from django.db import transaction
-from django.db.models import Prefetch
 from logging import Logger
 
 from .models import User, Post, Comment, FriendRequest, Notification, ChatRoom, ChatMessage
@@ -331,7 +330,6 @@ def send_friend_request(request, username):
             to_user=to_user,
             status='pending'
         ).exists():
-            messages.info(request, "Friend request already sent!")
             return redirect('core:profile', username=username)
         
         FriendRequest.objects.create(
@@ -384,17 +382,13 @@ def accept_friend_request(request, username):
         )
 
         logger.info(f"User {request.user.username} accepted friend request from {username} and created chat room")
-        messages.success(request, f"You are now friends with {from_user.username}!")
         
     except User.DoesNotExist:
         logger.error(f"User {username} not found")
-        messages.error(request, "User not found!")
     except FriendRequest.DoesNotExist:
         logger.error(f"Friend request from {username} not found")
-        messages.error(request, "Friend request not found!")
     except Exception as e:
         logger.error(f"Error accepting friend request: {str(e)}")
-        messages.error(request, f"Error accepting friend request: {str(e)}")
     
     return redirect('core:profile', username=username)
 
@@ -404,7 +398,6 @@ def remove_friend(request, username):
         friend = User.objects.get(username=username)
         
         if not request.user.friends.filter(username=username).exists():
-            messages.error(request, "You are not friends with this user!")
             return redirect('core:profile', username=username)
         
         # Remove from friends list (symmetrical=True will handle both directions)
@@ -421,14 +414,11 @@ def remove_friend(request, username):
         ChatRoom.objects.filter(participants=request.user).filter(participants=friend).delete()
         
         logger.info(f"Removed {friend.username} from friends and deleted chat room")
-        messages.success(request, f"Removed {friend.username} from friends!")
         
     except User.DoesNotExist:
         logger.error("User not found!")
-        messages.error(request, "User not found!")
     except Exception as e:
         logger.error(f"Error removing friend: {str(e)}")
-        messages.error(request, f"Error removing friend: {str(e)}")
 
     return redirect('core:profile', username=username)
 
@@ -616,7 +606,6 @@ def chat_list(request):
         
     except Exception as e:
         logger.error(f"Critical error in chat_list view: {str(e)}", exc_info=True)
-        messages.error(request, "An error occurred while loading your chats. Please try again.")
         return redirect('core:index')
 
 @login_required(login_url='core:login')
@@ -644,7 +633,6 @@ def chat_room(request, username):
                     logger.info(f"Created new chat room {room.id} between {request.user.username} and {other_user.username}")
         except Exception as e:
             logger.error(f"Error creating/fetching chat room: {str(e)}", exc_info=True)
-            messages.error(request, "Error accessing chat room")
             return redirect('core:messages')
 
         # Mark messages as read
@@ -704,7 +692,6 @@ def chat_room(request, username):
         except Exception as e:
             logger.error(f"Error fetching chat rooms: {str(e)}", exc_info=True)
             formatted_chats = []
-            messages.error(request, "Error loading your conversations")
 
         # Get messages for current chat
         try:
@@ -712,7 +699,6 @@ def chat_room(request, username):
         except Exception as e:
             logger.error(f"Error fetching messages: {str(e)}")
             messages_list = []
-            messages.error(request, "Error loading messages")
 
         context = {
             'formatted_chats': formatted_chats,  # Now using same structure as chat_list
@@ -732,5 +718,4 @@ def chat_room(request, username):
         
     except Exception as e:
         logger.critical(f"Unexpected error in chat_room view: {str(e)}", exc_info=True)
-        messages.error(request, "An unexpected error occurred")
         return redirect('core:messages')
