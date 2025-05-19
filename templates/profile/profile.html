@@ -97,11 +97,6 @@
                             <span>Like</span> ({{ post.like_count }})
                         </button>
                     </form>
-                    {% comment %} <button class="action-button">
-                        <i class="fas fa-comment"></i>
-                        <span>Comment</span>
-                    </button> {% endcomment %}
-                    <!-- Delete Post -->
                     {% if post.user == request.user %}
                         <form class="action-button" method="post" action="{% url 'core:delete_post' post.id %}">
                             {% csrf_token %}
@@ -113,6 +108,38 @@
                             </button>
                         </form>
                     {% endif %}
+                </div>
+
+                <div class="comments-section">
+                    <!-- Comments -->
+                    {% for comment in post.comments.all %}
+                        <div class="comment-item">
+                            <div class="comment-header">
+                                <div class="left-comment-header">
+                                    <img src="{{ comment.user.profile_picture.url }}" alt="Profile" class="profile-img">
+                                    <div class="comment-user-info">
+                                        <div class="comment-username">{{ comment.user.username }}</div>
+                                        <div class="comment-time">{{ comment.timestamp|timesince }} ago</div>
+                                    </div>
+                                </div>
+                                {% if comment.user == post.user or comment.user == request.user %}
+                                    <div class="right-comment-header">
+                                        <a class="delete-button" href="{% url 'core:delete_comment' comment.id %}"
+                                        onclick="return confirm('Are you sure you want to delete this comment?')">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="comment-text">{{ comment.content }}</div>
+                        </div>
+                    {% endfor %}
+                    <form class="comment-form" method="post" action="{% url 'core:add_comment' post.id %}">
+                        {% csrf_token %}
+                        <img src="{{ user.profile_picture.url }}" alt="Profile" class="profile-img">
+                        <input type="text" name="content" class="comment-input" placeholder="Write a comment...">
+                        <button type="submit" class="comment-button">Comment</button>
+                    </form>
                 </div>
             </div>
         {% empty %}
